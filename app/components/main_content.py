@@ -5,6 +5,17 @@ from app.states.dspy_state import DSPyState
 def score_display(
     scores: rx.Var[list[dict]], title: str, color_class: str
 ) -> rx.Component:
+    """
+    Create a score display card showing category-wise evaluation scores.
+
+    Args:
+        scores: Reflex variable containing list of score objects with 'category' and 'score' keys.
+        title: Display title for the score card (e.g., "Current Scores", "Best Scores").
+        color_class: Tailwind CSS color class for the title (e.g., "text-red-400", "text-green-400").
+
+    Returns:
+        rx.Component: Score display card with category breakdown.
+    """
     return rx.el.div(
         rx.el.h3(title, class_name=f"text-lg font-semibold mb-3 {color_class}"),
         rx.el.div(
@@ -35,6 +46,20 @@ def score_display(
 
 
 def main_content() -> rx.Component:
+    """
+    Create the main content area with tweet optimization interface.
+
+    The main content includes:
+    - Header with sidebar toggle and application title
+    - Input textarea for base text
+    - Start/Stop optimization button
+    - Side-by-side display of current vs. best tweet
+    - Score comparison cards for current vs. best scores
+    - Real-time progress updates during optimization
+
+    Returns:
+        rx.Component: Complete main content area with pop-punk styling.
+    """
     return rx.el.main(
         rx.el.div(
             rx.el.button(

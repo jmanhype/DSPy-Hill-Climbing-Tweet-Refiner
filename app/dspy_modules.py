@@ -1,15 +1,28 @@
 import dspy
 import os
+from typing import Optional
 
-_lm = None
+_lm: Optional[dspy.LM] = None
 
 
-def _get_lm():
+def _get_lm() -> dspy.LM:
+    """
+    Get or create a cached DSPy language model instance configured for OpenRouter.
+
+    Returns:
+        dspy.LM: Configured language model instance using Claude Sonnet 4.5 via OpenRouter.
+
+    Raises:
+        ValueError: If OPENROUTER_API_KEY environment variable is not set.
+    """
     global _lm
     if _lm is None:
         api_key = os.getenv("OPENROUTER_API_KEY")
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY environment variable not set.")
+            raise ValueError(
+                "OPENROUTER_API_KEY environment variable not set. "
+                "Please set it with: export OPENROUTER_API_KEY='your-key-here'"
+            )
         _lm = dspy.LM(
             model="openai/anthropic/claude-3.5-sonnet",
             api_key=api_key,
@@ -43,12 +56,20 @@ class TweetEvaluatorSignature(dspy.Signature):
     )
 
 
-_generator = None
-_evaluator = None
+_generator: Optional[dspy.ChainOfThought] = None
+_evaluator: Optional[dspy.ChainOfThought] = None
 
 
-def get_generator():
-    """Get a cached instance of the tweet generator predictor."""
+def get_generator() -> dspy.ChainOfThought:
+    """
+    Get a cached instance of the tweet generator predictor.
+
+    The generator uses DSPy's ChainOfThought module to convert input text
+    into engaging, concise tweets (max 280 characters) with relevant hashtags.
+
+    Returns:
+        dspy.ChainOfThought: Configured tweet generator instance.
+    """
     global _generator
     if _generator is None:
         dspy.configure(lm=_get_lm())
@@ -56,8 +77,16 @@ def get_generator():
     return _generator
 
 
-def get_evaluator():
-    """Get a cached instance of the tweet evaluator predictor."""
+def get_evaluator() -> dspy.ChainOfThought:
+    """
+    Get a cached instance of the tweet evaluator predictor.
+
+    The evaluator uses DSPy's ChainOfThought module to score tweets
+    on custom categories (1-9 scale) and return structured JSON results.
+
+    Returns:
+        dspy.ChainOfThought: Configured tweet evaluator instance.
+    """
     global _evaluator
     if _evaluator is None:
         dspy.configure(lm=_get_lm())

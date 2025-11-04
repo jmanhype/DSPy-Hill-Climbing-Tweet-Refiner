@@ -5,6 +5,17 @@ from app.states.dspy_state import DSPyState
 def config_slider(
     label: str, value: rx.Var[int], on_change: rx.event.EventHandler
 ) -> rx.Component:
+    """
+    Create a configuration slider component with label and value display.
+
+    Args:
+        label: Display label for the slider (e.g., "Iterations (n)").
+        value: Reflex variable holding the current slider value.
+        on_change: Event handler called when slider value changes.
+
+    Returns:
+        rx.Component: Styled slider component with label and value indicator.
+    """
     return rx.el.div(
         rx.el.label(label, class_name="text-sm font-medium text-gray-300"),
         rx.el.div(
@@ -25,6 +36,16 @@ def config_slider(
 
 
 def category_manager() -> rx.Component:
+    """
+    Create the category management interface for tweet scoring.
+
+    Displays existing categories with remove buttons and an input field
+    for adding new categories. Categories are automatically persisted
+    to browser local storage.
+
+    Returns:
+        rx.Component: Category manager UI with add/remove functionality.
+    """
     return rx.el.div(
         rx.el.h3(
             "Scoring Categories", class_name="text-md font-semibold text-white mb-3"
@@ -71,6 +92,18 @@ def category_manager() -> rx.Component:
 
 
 def sidebar() -> rx.Component:
+    """
+    Create the main sidebar component with configuration and category management.
+
+    The sidebar contains:
+    - Application branding (DSPy Tweeter - Pop-Punk Edition)
+    - Configuration sliders for iterations and patience parameters
+    - Category management interface for custom scoring categories
+    - Collapsible functionality controlled by sidebar_open state
+
+    Returns:
+        rx.Component: Complete sidebar component with pop-punk styling.
+    """
     return rx.el.aside(
         rx.el.div(
             rx.el.h2(
