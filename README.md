@@ -1,185 +1,92 @@
-# DSPy Tweet Optimizer 🐦
+# DSPy-Hill-Climbing-Tweet-Refiner
 
-A sophisticated tweet optimization tool that uses DSPy with Claude Sonnet 4.5 (via OpenRouter) to iteratively improve tweets using a hill climbing algorithm. Features a pop-punk themed interface with real-time progress tracking.
+A tweet optimization tool built with DSPy and Reflex. Uses hill climbing to iteratively generate and score tweet variants, keeping the highest-scoring version.
 
-![Pop-Punk Edition](https://img.shields.io/badge/style-pop--punk-red?style=flat-square)
-![Python](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square)
-![Reflex](https://img.shields.io/badge/reflex-0.8.15a1-purple?style=flat-square)
+## How it works
 
-## ✨ Features
+1. Generate an initial tweet from input text using DSPy + Claude Sonnet (via OpenRouter)
+2. Score it across configurable categories (1-9 scale)
+3. For each iteration, generate a variant and compare scores
+4. Keep the variant if total score improves; otherwise increment a patience counter
+5. Stop when patience runs out or max iterations reached
 
-- **Hill Climbing Optimization**: Iteratively generates and evaluates tweets to find the best version
-- **Customizable Scoring**: Define your own evaluation categories (clarity, engagement, hashtag relevance, etc.)
-- **Real-Time Progress**: Watch the optimization process with live updates
-- **Patience Parameter**: Stop optimization after N iterations without improvement
-- **Persistent Categories**: Your custom categories are saved in browser local storage
-- **Pop-Punk UI**: Black/white/red aesthetic with smooth animations
-- **DSPy + Claude Sonnet 4.5**: Powered by state-of-the-art language models
+## Stack
 
-## 🚀 Quick Start
+| Component | Technology |
+|---|---|
+| Frontend/backend | Reflex 0.8.15a1 (Python full-stack framework) |
+| LLM orchestration | DSPy |
+| Model | Claude Sonnet 3.5 via OpenRouter |
+| State persistence | Browser localStorage (for custom categories) |
 
-### Prerequisites
+## Requirements
 
-- Python 3.8 or higher
-- OpenRouter API key ([get one here](https://openrouter.ai/))
+- Python >= 3.8
+- OpenRouter API key
 
-### Installation
+## Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/DSPy-Hill-Climbing-Tweet-Refiner.git
-   cd DSPy-Hill-Climbing-Tweet-Refiner
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Set up your API key**
-   ```bash
-   export OPENROUTER_API_KEY="your-api-key-here"
-   ```
-
-4. **Run the application**
-   ```bash
-   reflex run
-   ```
-
-5. **Open your browser**
-   Navigate to `http://localhost:3000`
-
-## 📖 Usage
-
-### Basic Workflow
-
-1. **Enter your input text**: Type or paste the text you want to turn into a tweet
-2. **Configure parameters**:
-   - **Iterations**: How many refinement cycles to run (1-20)
-   - **Patience**: Stop after N iterations without improvement (1-20)
-3. **Customize scoring categories**: Add or remove evaluation criteria
-4. **Start optimizing**: Click "Start Optimizing" and watch the magic happen!
-5. **View results**: See the best tweet with category-wise scores
-
-### Scoring Categories
-
-The optimizer evaluates each generated tweet across multiple categories (1-9 scale). Default categories include:
-
-- **Clarity and conciseness**: How clear and to-the-point is the tweet?
-- **Engagement and hook**: Does it grab attention?
-- **Hashtag relevance**: Are hashtags used effectively?
-
-You can add custom categories like "Brand voice", "Call-to-action strength", "Humor", etc.
-
-### How Hill Climbing Works
-
-1. Generate an initial tweet from your input text
-2. Evaluate it on all categories
-3. For each iteration:
-   - Generate a new tweet variant
-   - Evaluate the new tweet
-   - If the total score improves → keep it as the new best
-   - If no improvement → increment patience counter
-4. Stop when patience threshold is reached or max iterations completed
-
-## 🏗️ Architecture
-
-```
-app/
-├── app.py                    # Main application entry point
-├── dspy_modules.py          # DSPy generator and evaluator modules
-├── states/
-│   └── dspy_state.py        # State management and optimization logic
-└── components/
-    ├── sidebar.py           # Config panel and category manager
-    └── main_content.py      # Tweet display and score visualization
+```bash
+git clone https://github.com/jmanhype/DSPy-Hill-Climbing-Tweet-Refiner.git
+cd DSPy-Hill-Climbing-Tweet-Refiner
+pip install -r requirements.txt
+export OPENROUTER_API_KEY="your-key"
+reflex run
+# Open http://localhost:3000
 ```
 
-### Key Components
-
-- **TweetGeneratorSignature**: DSPy module for generating engaging tweets (max 280 chars)
-- **TweetEvaluatorSignature**: DSPy module for scoring tweets on custom categories
-- **DSPyState**: Reflex state with hill climbing logic and local storage persistence
-- **Background Processing**: Async event handler for non-blocking optimization
-
-## 🎨 Design System
-
-The UI follows a pop-punk aesthetic:
-
-- **Colors**: Black background, white text, red accents (#dc2626)
-- **Typography**: Inter font family (400-900 weights)
-- **Layout**: Responsive flexbox with sidebar toggle
-- **Animations**: Smooth transitions for sidebar and state changes
-
-## 🔧 Configuration
-
-### Environment Variables
+## Configuration
 
 | Variable | Description | Required |
-|----------|-------------|----------|
-| `OPENROUTER_API_KEY` | Your OpenRouter API key | ✅ Yes |
+|---|---|---|
+| `OPENROUTER_API_KEY` | OpenRouter API key | Yes |
 
-### Model Configuration
-
-By default, the app uses `openai/anthropic/claude-3.5-sonnet` via OpenRouter. You can modify this in `app/dspy_modules.py`:
+To change the model, edit `app/dspy_modules.py`:
 
 ```python
 _lm = dspy.LM(
-    model="openai/anthropic/claude-3.5-sonnet",  # Change model here
+    model="openai/anthropic/claude-3.5-sonnet",  # change here
     api_key=api_key,
     api_base="https://openrouter.ai/api/v1",
-    headers={"HTTP-Referer": "http://localhost:3000"},
-    cache=False,
 )
 ```
 
-## 🧪 Development
+## Parameters
 
-### Project Structure
+| Parameter | Range | Description |
+|---|---|---|
+| Iterations | 1-20 | Number of refinement cycles |
+| Patience | 1-20 | Stop after N iterations without improvement |
+| Categories | Custom | Evaluation criteria (clarity, engagement, hashtag relevance, etc.) |
 
-- `rxconfig.py`: Reflex framework configuration
-- `requirements.txt`: Python dependencies
-- `plan.md`: Detailed project implementation notes
-- `CLAUDE.md`: AI-assisted development guardrails
+## Default scoring categories
 
-### Adding New Features
+- Clarity and conciseness
+- Engagement and hook
+- Hashtag relevance
 
-1. **New scoring category**: Just add it in the sidebar - it's automatically saved!
-2. **Custom UI components**: Add to `app/components/`
-3. **State management**: Extend `DSPyState` in `app/states/dspy_state.py`
+Custom categories can be added in the sidebar and are persisted in browser localStorage.
 
-## 🐛 Troubleshooting
+## Project structure
 
-### "OPENROUTER_API_KEY environment variable not set"
-Make sure you've exported the environment variable before running `reflex run`:
-```bash
-export OPENROUTER_API_KEY="your-key"
+```
+app/
+  app.py              # Entry point
+  dspy_modules.py     # DSPy generator and evaluator signatures
+  states/
+    dspy_state.py     # Hill climbing logic, state management
+  components/
+    sidebar.py        # Config panel, category manager
+    main_content.py   # Tweet display, score visualization
 ```
 
-### Slow generation
-- Reduce the number of iterations
-- Increase patience parameter (stops sooner)
-- Check your OpenRouter API rate limits
+## Limitations
 
-### Categories not persisting
-- Make sure you're using the same browser
-- Check browser console for local storage errors
-- Clear local storage and re-add categories
+- Depends on OpenRouter availability and rate limits
+- No server-side persistence of optimization history
+- Single-user (no auth or multi-tenancy)
+- The Reflex version pinned (0.8.15a1) is an alpha release
 
-## 📝 License
+## License
 
-This project is provided as-is for educational and personal use.
-
-## 🙏 Acknowledgments
-
-- Built with [Reflex](https://reflex.dev/) - Pure Python web framework
-- Powered by [DSPy](https://github.com/stanfordnlp/dspy) - Programming with language models
-- Uses [Claude Sonnet 4.5](https://www.anthropic.com/claude) via [OpenRouter](https://openrouter.ai/)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-**Made with ❤️ and a lot of ☕ | Pop-Punk Edition 🎸**
+Provided as-is for educational and personal use.
